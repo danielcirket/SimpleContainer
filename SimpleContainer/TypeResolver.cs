@@ -38,8 +38,7 @@ namespace SimpleContainer
             // TODO: Implement some caching for this?
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var subscriberAssemblies = assemblies.Where(a => !a.FullName.StartsWith("SubscriberCRM.Client", StringComparison.OrdinalIgnoreCase));
-            var types = subscriberAssemblies.SelectMany(a => a.GetTypes());
+            var types = assemblies.SelectMany(a => a.GetTypes());
 
             Type type = null;
 
