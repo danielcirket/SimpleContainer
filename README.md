@@ -1,6 +1,5 @@
 #**Simple Container**
 
-----------
 
 Usage
 -----
@@ -35,6 +34,5 @@ Resolving an item:
 
 #**TODOs**
 
-----------
 
  - Add interface method overloads to allow callback and/or singleton parameter to be passed through in the`Register<TService, TImplementation>()`
