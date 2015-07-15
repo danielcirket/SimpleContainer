@@ -79,7 +79,7 @@ namespace SimpleContainer
 
             // TODO: Should it use the instance by default? I'd assume so initially.
             // Check if the service has an instance in the list of instances, if so, return it here.
-            if (instance != null)
+            if (_serviceInstanceLookup.TryGetValue(type, out instance))
                 return instance;
 
             var constructor = ContainerConstructorCache.GetConstructor(containerType.Type);
