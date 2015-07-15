@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace SimpleContainer
 {
-    public class ContainerParameterCache
+    internal class ContainerParameterCache
     {
         private ContainerParameterCache() { }
 
@@ -14,8 +14,6 @@ namespace SimpleContainer
         private static ConcurrentDictionary<ConstructorInfo, List<ParameterInfo>> _parameterCache = new ConcurrentDictionary<ConstructorInfo, List<ParameterInfo>>();
 
         #endregion
-
-        #region Methods
 
         public static List<ParameterInfo> GetParameters(ConstructorInfo constructor)
         {
@@ -29,11 +27,11 @@ namespace SimpleContainer
 
             return parameterInfo;
         }
+
         private static List<ParameterInfo> DiscoverParameters(ConstructorInfo constructor)
         {
             return constructor.GetParameters().ToList();
         }
 
-        #endregion
     }
 }

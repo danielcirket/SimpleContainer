@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace SimpleContainer
 {
-    public class ContainerConstructorCache
+    internal class ContainerConstructorCache
     {
         private ContainerConstructorCache() { }
 
@@ -41,14 +41,14 @@ namespace SimpleContainer
 
             if (constructors.Count() > 0)
             {
-                // If constructors found return first constructor for now.
-                // TODO: Potentially deal with multiple constructors.
+                // If constructors found return first constructor
+                // TODO: May want to change this to support multiple constructors?!?
                 return constructors[0];
             }
 
             return null;
         }
-        
+
         #endregion
     }
 }
