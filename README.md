@@ -38,7 +38,7 @@ And can also still be used as a single instance once resolved
 Resolving an item:
 
     container.Resolve<T>();
-    container.Resolve(TServiceType);
+    container.Resolve(ServiceType);
 
 # **TODOs**
 
