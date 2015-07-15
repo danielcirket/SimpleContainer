@@ -20,28 +20,16 @@ namespace SimpleContainer
         {
             _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = typeof(TImplementation), IsSingleton = false };
         }
-        public void Register<TService>(Type implementation)
-        {
-            Register<TService>(implementation, false);
-        }
-        public void Register<TService>(Type implementation, bool singleton)
+        public void Register<TService>(Type implementation, bool singleton = false)
         {
             _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementation, IsSingleton = singleton };
         }
-        public void Register<TService>(Type implementation, Action<TService> callback)
-        {
-            Register(implementation, callback, false);
-        }
-        public void Register<TService>(Type implementation, Action<TService> callback, bool singleton)
-        {
+        public void Register<TService>(Type implementation, Action<TService> callback, bool singleton = false)
+		{ 
             _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementation, IsSingleton = singleton };
             _serviceTypeCallbackLookup[typeof(TService)] = (x) => callback((TService)x);
         }
-        public void Register(Type service, Type implementation)
-        {
-            Register(service, implementation, false);
-        }
-        public void Register(Type service, Type implementation, bool singleton)
+        public void Register(Type service, Type implementation, bool singleton = false)
         {
             if (service == null)
                 throw new ArgumentNullException("service", string.Format("Service not registered. The type could not be resolved."));
@@ -54,17 +42,11 @@ namespace SimpleContainer
 
             _serviceTypeLookup[service] = new ContainerType { Type = implementation, IsSingleton = singleton };
         }
-        /// <summary>
-        /// Allows you to register an instance of an object to a type.
-        /// This will then be used as a singleton, and the same object passed
-        /// for each call.
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <param name="instance"></param>
         public void Register<TService>(TService instance)
         {
             _serviceInstanceLookup[typeof(TService)] = instance;
         }
+
         public T Resolve<T>()
          {
             return (T)Resolve(typeof(T));
@@ -113,17 +95,12 @@ namespace SimpleContainer
             }            
         }
 
-        /// <summary>
-        /// TODO: Probably not required, might remove.
-        /// </summary>
-        /// <typeparam name="TService"></typeparam>
-        /// <returns></returns>
         public bool IsRegistered<TService>()
         {
+			// TODO: Remove exception logic!
             try
             {
                 var service = Resolve<TService>();
-
                 return true;
             }
             catch (Exception)
