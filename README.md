@@ -4,35 +4,41 @@
 Usage
 -----
 
+Instantiate the Container:
+
+```c#
+var container = new Container();
+```
+
 Register a class/service:
 
 ```c#
-Container.Register<TService>(ImplementationInstance);
-Container.Register<TService, TImplementation>();
-Container.Register<TService>(ImplementationType);
-Container.Register(ServiceType, ImplementationType);
+container.Register<TService>(ImplementationInstance);
+container.Register<TService, TImplementation>();
+container.Register<TService>(ImplementationType);
+container.Register(ServiceType, ImplementationType);
 ```
 
 Register a class/service where a single instance is used when resolved:
 
-    Container.Register<TService>(ImplementationType, true);
-    Container.Register(ServiceType, ImplementationType, true);
+    container.Register<TService>(ImplementationType, true);
+    container.Register(ServiceType, ImplementationType, true);
     
 A callback `Action<T>` can also be passed through to be used with the resolved object if required:
 
-    Container.Register<TService>(ImplementationType, callback);
+    container.Register<TService>(ImplementationType, callback);
    
 And can also still be used as a single instance once resolved
 
-    Container.Register<TService>(ImplementationType, callback, true);
+    container.Register<TService>(ImplementationType, callback, true);
 
 
 **Note:** If an instance is passed through when registered it will be treated as a single instance and the same object used each time its resolved.
 
 Resolving an item:
 
-    Container.Resolve<T>();
-    Container.Resolve(TServiceType);
+    container.Resolve<T>();
+    container.Resolve(TServiceType);
 
 # **TODOs**
 
