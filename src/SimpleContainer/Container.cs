@@ -6,7 +6,7 @@ namespace SimpleContainer
 {
     public class Container : IContainer
     {
-        private readonly ConcurrentDictionary<Type, ContainerType> _serviceTypeLookup = new ConcurrentDictionary<Type, ContainerType>();
+        private readonly ConcurrentDictionary<Type, CachedTypeInfo> _serviceTypeLookup = new ConcurrentDictionary<Type, CachedTypeInfo>();
         private readonly ConcurrentDictionary<Type, object> _serviceInstanceLookup = new ConcurrentDictionary<Type, object>();
         private readonly ConcurrentDictionary<Type, Action<object>> _serviceTypeCallbackLookup = new ConcurrentDictionary<Type, Action<object>>();
 
@@ -14,21 +14,21 @@ namespace SimpleContainer
 
         public void Register<TService, TImplementation>() where TImplementation : TService
         {
-            _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = typeof(TImplementation), IsSingleton = false };
+            _serviceTypeLookup[typeof(TService)] = new CachedTypeInfo { Type = typeof(TImplementation), IsSingleton = false };
         }
         public void Register<TService>(Type implementationType, bool singleton = false)
         {
             if (implementationType == null)
                 throw new ArgumentNullException("implementationType cannot be null.");
 
-            _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementationType, IsSingleton = singleton };
+            _serviceTypeLookup[typeof(TService)] = new CachedTypeInfo { Type = implementationType, IsSingleton = singleton };
         }
         public void Register<TService>(Type implementationType, Action<TService> callback, bool singleton = false)
 		{
             if (implementationType == null)
                 throw new ArgumentNullException("serviceType cannot be null.");
 
-            _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementationType, IsSingleton = singleton };
+            _serviceTypeLookup[typeof(TService)] = new CachedTypeInfo { Type = implementationType, IsSingleton = singleton };
 
             if (callback != null)
                 _serviceTypeCallbackLookup[typeof(TService)] = (x) => callback((TService)x);
@@ -44,7 +44,7 @@ namespace SimpleContainer
             if (!serviceType.IsAssignableFrom(implementationType))
                 throw new ArgumentException(string.Format("Service could not be registered. {0} does not implement {1}.", implementationType.Name, serviceType.Name));
 
-            _serviceTypeLookup[serviceType] = new ContainerType { Type = implementationType, IsSingleton = singleton };
+            _serviceTypeLookup[serviceType] = new CachedTypeInfo { Type = implementationType, IsSingleton = singleton };
         }
         public void Register<TService>(TService instance)
         {
@@ -60,14 +60,14 @@ namespace SimpleContainer
         }
         private object Resolve(Type type)
         {
-            ContainerType containerType;
+            CachedTypeInfo containerType;
             object instance = null;
 
             // If the type isn't registered, register the type to itself.
             if (!_serviceTypeLookup.TryGetValue(type, out containerType))
             {
                 Register(type, type);
-                containerType = new ContainerType { Type = type, IsSingleton = false };
+                containerType = new CachedTypeInfo { Type = type, IsSingleton = false };
             }
 
             // TODO: Should it use the instance by default? I'd assume so initially.
@@ -75,13 +75,13 @@ namespace SimpleContainer
             if (_serviceInstanceLookup.TryGetValue(type, out instance))
                 return instance;
 
-            var constructor = ContainerConstructorCache.GetConstructor(containerType.Type);
+            var constructor = ConstructorCache.GetConstructor(containerType.Type);
             if (constructor != null)
             {
                 // TODO: Deal with multiple constructors!?
 
                 // Get constructor parameters.
-                var parameters = ContainerParameterCache.GetParameters(constructor);
+                var parameters = ParameterCache.GetParameters(constructor);
                 var parameterObjects = new List<object>();
          
                 foreach (var parameter in parameters)

@@ -5,10 +5,9 @@ using System.Reflection;
 
 namespace SimpleContainer
 {
-    internal class ContainerParameterCache
+    internal class ParameterCache
     {
         private static ConcurrentDictionary<ConstructorInfo, List<ParameterInfo>> _parameterCache = new ConcurrentDictionary<ConstructorInfo, List<ParameterInfo>>();
-
 
         public static List<ParameterInfo> GetParameters(ConstructorInfo constructor)
         {

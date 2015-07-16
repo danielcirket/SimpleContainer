@@ -2,7 +2,7 @@
 
 namespace SimpleContainer
 {
-    internal struct ContainerType
+    internal struct CachedTypeInfo
     {
         public Type Type;
         public bool IsSingleton;

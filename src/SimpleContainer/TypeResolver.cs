@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Reflection;
 
 namespace SimpleContainer
 {
@@ -37,13 +38,9 @@ namespace SimpleContainer
             Type type = null;
 
             if (serviceType != null)
-            {
                 type = types.FirstOrDefault(t => t.Name == implementingType && serviceType.IsAssignableFrom(t));
-            }
             else
-            {
                 type = types.FirstOrDefault(t => t.Name == implementingType);
-             }
 
             return type;
         }
