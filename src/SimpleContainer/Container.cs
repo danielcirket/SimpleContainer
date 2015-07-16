@@ -16,37 +16,40 @@ namespace SimpleContainer
         {
             _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = typeof(TImplementation), IsSingleton = false };
         }
-        public void Register<TService>(Type implementation, bool singleton = false)
+        public void Register<TService>(Type implementationType, bool singleton = false)
         {
-            if (implementation == null)
-                return;
+            if (implementationType == null)
+                throw new ArgumentNullException("implementationType cannot be null.");
 
-            _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementation, IsSingleton = singleton };
+            _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementationType, IsSingleton = singleton };
         }
-        public void Register<TService>(Type implementation, Action<TService> callback, bool singleton = false)
+        public void Register<TService>(Type implementationType, Action<TService> callback, bool singleton = false)
 		{
-            if (implementation == null)
-                return;
+            if (implementationType == null)
+                throw new ArgumentNullException("serviceType cannot be null.");
 
-            _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementation, IsSingleton = singleton };
+            _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementationType, IsSingleton = singleton };
 
             if (callback != null)
                 _serviceTypeCallbackLookup[typeof(TService)] = (x) => callback((TService)x);
         }
-        public void Register(Type service, Type implementation, bool singleton = false)
+        public void Register(Type serviceType, Type implementationType, bool singleton = false)
         {
-            if (service == null || implementation == null)
-                return;
+            if (serviceType == null)
+                throw new ArgumentNullException("serviceType cannot be null.");
 
-            if (!service.IsAssignableFrom(implementation))
-                throw new ArgumentException(string.Format("Service could not be registered. {0} does not implement {1}.", implementation.Name, service.Name));
+            if (implementationType == null)
+                throw new ArgumentNullException("serviceType cannot be null.");
 
-            _serviceTypeLookup[service] = new ContainerType { Type = implementation, IsSingleton = singleton };
+            if (!serviceType.IsAssignableFrom(implementationType))
+                throw new ArgumentException(string.Format("Service could not be registered. {0} does not implement {1}.", implementationType.Name, serviceType.Name));
+
+            _serviceTypeLookup[serviceType] = new ContainerType { Type = implementationType, IsSingleton = singleton };
         }
         public void Register<TService>(TService instance)
         {
             if (instance == null)
-                return;
+                throw new ArgumentNullException("instance cannot be null.");
 
             _serviceInstanceLookup[typeof(TService)] = instance;
         }

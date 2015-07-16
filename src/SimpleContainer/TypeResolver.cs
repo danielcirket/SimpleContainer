@@ -6,13 +6,7 @@ namespace SimpleContainer
 {
     internal static class TypeResolver
     {
-        #region Fields
-
         private static ConcurrentDictionary<Type, Type> _typeCache = new ConcurrentDictionary<Type, Type>();
-
-        #endregion
-
-        #region Methods
 
         public static Type Resolve<T>(string className)
         {
@@ -53,7 +47,6 @@ namespace SimpleContainer
 
             return type;
         }
-        #endregion
     }
 }
 
