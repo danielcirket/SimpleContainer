@@ -6,15 +6,11 @@ namespace SimpleContainer
 {
     public class Container : IContainer
     {
-        #region Fields
-
         private readonly ConcurrentDictionary<Type, ContainerType> _serviceTypeLookup = new ConcurrentDictionary<Type, ContainerType>();
         private readonly ConcurrentDictionary<Type, object> _serviceInstanceLookup = new ConcurrentDictionary<Type, object>();
         private readonly ConcurrentDictionary<Type, Action<object>> _serviceTypeCallbackLookup = new ConcurrentDictionary<Type, Action<object>>();
 
-        #endregion
-
-        #region Methods
+        #region IContainer Implementation
 
         public void Register<TService, TImplementation>() where TImplementation : TService
         {
@@ -22,20 +18,25 @@ namespace SimpleContainer
         }
         public void Register<TService>(Type implementation, bool singleton = false)
         {
+            if (implementation == null)
+                return;
+
             _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementation, IsSingleton = singleton };
         }
         public void Register<TService>(Type implementation, Action<TService> callback, bool singleton = false)
-		{ 
+		{
+            if (implementation == null)
+                return;
+
             _serviceTypeLookup[typeof(TService)] = new ContainerType { Type = implementation, IsSingleton = singleton };
-            _serviceTypeCallbackLookup[typeof(TService)] = (x) => callback((TService)x);
+
+            if (callback != null)
+                _serviceTypeCallbackLookup[typeof(TService)] = (x) => callback((TService)x);
         }
         public void Register(Type service, Type implementation, bool singleton = false)
         {
-            if (service == null)
-                throw new ArgumentNullException("service", string.Format("Service not registered. The type could not be resolved."));
-
-            if (implementation == null)
-                throw new ArgumentNullException("implementation", string.Format("Service not registered. The type for {0} could not be resolved.", service.Name));
+            if (service == null || implementation == null)
+                return;
 
             if (!service.IsAssignableFrom(implementation))
                 throw new ArgumentException(string.Format("Service could not be registered. {0} does not implement {1}.", implementation.Name, service.Name));
@@ -44,6 +45,9 @@ namespace SimpleContainer
         }
         public void Register<TService>(TService instance)
         {
+            if (instance == null)
+                return;
+
             _serviceInstanceLookup[typeof(TService)] = instance;
         }
 
@@ -56,8 +60,12 @@ namespace SimpleContainer
             ContainerType containerType;
             object instance = null;
 
-            if (!_serviceTypeLookup.TryGetValue(type, out containerType) && !_serviceInstanceLookup.TryGetValue(type, out instance))
-                throw new Exception(string.Format("Service not registered. The type {0} could not be resolved.", type));
+            // If the type isn't registered, register the type to itself.
+            if (!_serviceTypeLookup.TryGetValue(type, out containerType))
+            {
+                Register(type, type);
+                containerType = new ContainerType { Type = type, IsSingleton = false };
+            }
 
             // TODO: Should it use the instance by default? I'd assume so initially.
             // Check if the service has an instance in the list of instances, if so, return it here.
@@ -91,22 +99,27 @@ namespace SimpleContainer
             }
             else
             {
-                throw new Exception(string.Format("No constructors found for type: {0}.", containerType.Type));
+                // Return null rather than throw an exception for resolve failures.
+                // This null will happen when there are 0 constructors for the supplied type.
+                return null;
             }            
         }
 
         public bool IsRegistered<TService>()
         {
-			// TODO: Remove exception logic!
-            try
-            {
-                var service = Resolve<TService>();
+            if (_serviceTypeLookup.ContainsKey(typeof(TService)) || _serviceInstanceLookup.ContainsKey(typeof(TService)))
                 return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region IServiceProvider Implementation
+
+        public object GetService(Type serviceType)
+        {
+            return Resolve(serviceType);
         }
 
         #endregion

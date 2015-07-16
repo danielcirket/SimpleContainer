@@ -7,15 +7,7 @@ namespace SimpleContainer
 {
     internal class ContainerConstructorCache
     {
-        private ContainerConstructorCache() { }
-
-        #region Fields
-
         private static ConcurrentDictionary<Type, ConstructorInfo> _constructorCache = new ConcurrentDictionary<Type, ConstructorInfo>();
-
-        #endregion
-
-        #region Methods
 
         public static ConstructorInfo GetConstructor(Type type)
         {
@@ -48,7 +40,5 @@ namespace SimpleContainer
 
             return null;
         }
-
-        #endregion
     }
 }

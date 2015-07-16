@@ -7,13 +7,8 @@ namespace SimpleContainer
 {
     internal class ContainerParameterCache
     {
-        private ContainerParameterCache() { }
-
-        #region Fields
-
         private static ConcurrentDictionary<ConstructorInfo, List<ParameterInfo>> _parameterCache = new ConcurrentDictionary<ConstructorInfo, List<ParameterInfo>>();
 
-        #endregion
 
         public static List<ParameterInfo> GetParameters(ConstructorInfo constructor)
         {
@@ -27,11 +22,9 @@ namespace SimpleContainer
 
             return parameterInfo;
         }
-
         private static List<ParameterInfo> DiscoverParameters(ConstructorInfo constructor)
         {
             return constructor.GetParameters().ToList();
         }
-
     }
 }

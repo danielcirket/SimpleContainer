@@ -2,7 +2,7 @@
 
 namespace SimpleContainer
 {
-    public interface IContainer
+    public interface IContainer : IServiceProvider
     {
         void Register<TService, TImplementation>() where TImplementation : TService;
         void Register<TService>(Type implementation, bool singleton);
