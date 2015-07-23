@@ -41,9 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Container.cs" />
-    <Compile Include="ContainerConstructorCache.cs" />
-    <Compile Include="ContainerParameterCache.cs" />
-    <Compile Include="ContainerType.cs" />
+    <Compile Include="ConstructorCache.cs" />
+    <Compile Include="ParameterCache.cs" />
+    <Compile Include="CachedTypeInfo.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeResolver.cs" />
